@@ -110,10 +110,4 @@ public class algoritmoGenetico {
         return soma;
     }
     
-    public float Arredondar(Float Num,int CasaD){
-        float casaDe=(float)Math.pow(10,CasaD);
-        int valor = Math.round(Num*casaDe);
-        return valor/casaDe;
-    }
-    
 }
