@@ -21,7 +21,12 @@ public class algoritmoGenetico {
     private int TamBits = Matriz.length;
     
     public algoritmoGenetico(){
+        // POPULAÇÃO
         ArrayList<int[]> PopulaçãoInicial = PopulaçãoInicial(TamPopu, TamBits);
+        
+        // FITNESS
+        float[] apt = FAptidão(PopulaçãoInicial, TamPopu);
+        float soma=0f;
         
         //INICIO: IMPRIMIR POPULAÇÂO INICIAL
         for(int i=0;i<PopulaçãoInicial.size();i++){
@@ -34,9 +39,7 @@ public class algoritmoGenetico {
         }
         //FIM: IMPRIMIR POPULAÇÂO INICIAL
         
-        //INICIO: FITNESS
-        float[] apt = FAptidão(PopulaçãoInicial, TamPopu);
-        float soma=0f;
+        //INICIO: IMPRIMIR FITNESS
         
         for(int i=0;i<apt.length;i++){
             //apt[i] = Arredondar(apt[i], 2);
@@ -44,7 +47,42 @@ public class algoritmoGenetico {
             soma += apt[i];
         }
         System.out.print("Soma: "+soma+"\n");
-        //FIM: FITNESS
+        //FIM: IMPRIMIR FITNESS
+        
+        
+        
+    }
+    
+    public int torneio(float[] fit){
+        int lutadorA = r.nextInt(fit.length);
+        int lutadorB = r.nextInt(fit.length);
+        
+        int vencedor = lutadorA;
+        
+        if(fit[lutadorA] < fit[lutadorB]){
+            vencedor = lutadorB;
+        }
+        
+        return vencedor;
+    }
+    
+    public int roleta(float[] fit){
+        float valor = r.nextFloat();
+        float soma=0;
+        
+        int vencedor=fit.length;
+        
+        for(int i=0;i<fit.length;i++){
+            soma += fit[i];
+            if(soma > valor){
+                vencedor = i-1;
+            }
+        }
+        
+        return vencedor;
+    }
+    
+    public void OpCruzamento(ArrayList<int[]> População,int tp,int tc){
         
     }
     
