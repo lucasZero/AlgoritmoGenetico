@@ -1,9 +1,11 @@
 package algoritmogenetico;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+import javax.rmi.CORBA.UtilDelegate;
 
-public class algoritmoGenetico {
+public class algoritmoGenetico extends Utils{
     
     private Random r = new Random(System.currentTimeMillis());
     
@@ -28,28 +30,18 @@ public class algoritmoGenetico {
         float[] apt = FAptidão(PopulaçãoInicial, TamPopu);
         float soma=0f;
         
-        //INICIO: IMPRIMIR POPULAÇÂO INICIAL
-        for(int i=0;i<PopulaçãoInicial.size();i++){
-            int[] Individuo = PopulaçãoInicial.get(i);
-            System.out.print("Ind: ");
-            for(int x=0;x<Individuo.length;x++) {
-    		System.out.print(Individuo[x]+" ");
-            }
-            System.out.print("\n");
-        }
-        //FIM: IMPRIMIR POPULAÇÂO INICIAL
+        // IMPRIMIR POPULAÇÃO
+        printPopulação(PopulaçãoInicial);
         
         //INICIO: IMPRIMIR FITNESS
-        
         for(int i=0;i<apt.length;i++){
-            //apt[i] = Arredondar(apt[i], 2);
             System.out.print("Apt: "+apt[i]+"\n");
             soma += apt[i];
         }
         System.out.print("Soma: "+soma+"\n");
         //FIM: IMPRIMIR FITNESS
         
-        
+        OpCruzamento(PopulaçãoInicial, apt, TamPopu, r.nextFloat());
         
     }
     
@@ -70,20 +62,56 @@ public class algoritmoGenetico {
         float valor = r.nextFloat();
         float soma=0;
         
-        int vencedor=fit.length;
+        int vencedor = fit.length;
         
         for(int i=0;i<fit.length;i++){
-            soma += fit[i];
+            
+            soma = soma + fit[i];
+            
             if(soma > valor){
                 vencedor = i-1;
+                 break;
             }
         }
         
         return vencedor;
     }
     
-    public void OpCruzamento(ArrayList<int[]> População,int tp,int tc){
+    public ArrayList<int[]> OpCruzamento(ArrayList<int[]> População,float[] fitness,int tp,float tc){
+        ArrayList<int[]> novaGen = new ArrayList<int []>();
         
+        int qntCruz = Math.round(tp*tc)+10;
+        
+        for(int i=0; i<qntCruz; i++){
+            int corte = r.nextInt(Matriz.length-1)+1;
+            
+            int S_Pai = roleta(fitness);
+            int S_Mae = torneio(fitness);
+            
+            int[] pai = População.get(S_Pai);
+            int[] mae = População.get(S_Mae);
+            
+            int[] part_pai = Arrays.copyOfRange(pai, corte, pai.length);
+            int[] part_mae = Arrays.copyOfRange(mae, corte, pai.length);
+
+            int[] filho1 = Arrays.copyOf(pai, pai.length);
+            int[] filho2 = Arrays.copyOf(mae, mae.length);
+
+            System.arraycopy(part_mae, 0, filho1, corte, part_mae.length);
+            System.arraycopy(part_pai, 0, filho2, corte, part_pai.length);
+            
+            System.out.println("Roll:"+i+" - corte:"+corte);
+            System.out.println("Pai:"+S_Pai+" - Mae:"+S_Mae);
+            System.out.println(printArray(pai));
+            System.out.println(printArray(mae));
+            System.out.println(printArray(filho1));
+            System.out.println(printArray(filho2)+"\n");
+            
+            novaGen.add(filho1);
+            novaGen.add(filho2);
+        }
+        
+        return novaGen;
     }
     
     public float[] FAptidão(ArrayList<int[]> População,int tp){

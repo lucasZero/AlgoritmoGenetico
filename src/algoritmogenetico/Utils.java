@@ -1,0 +1,28 @@
+package algoritmogenetico;
+
+import java.util.ArrayList;
+
+public class Utils {
+    
+    public String printArray(int[] array){
+        String pArray="{";
+        for(int x=0;x<array.length;x++){
+           pArray+=array[x];
+           if(x!=array.length-1){pArray+=",";}
+        }
+        pArray+="}";
+        return pArray;
+    }
+    
+    public void printPopulação(ArrayList<int[]> População){
+        for(int i=0;i<População.size();i++){
+            int[] Individuo = População.get(i);
+            System.out.print("Ind: ");
+            for(int x=0;x<Individuo.length;x++) {
+    		System.out.print(Individuo[x]+" ");
+            }
+            System.out.print("\n");
+        }
+    }
+    
+}
