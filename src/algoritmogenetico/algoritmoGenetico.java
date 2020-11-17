@@ -3,7 +3,6 @@ package algoritmogenetico;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import javax.rmi.CORBA.UtilDelegate;
 
 public class algoritmoGenetico extends Utils{
     
@@ -22,6 +21,10 @@ public class algoritmoGenetico extends Utils{
     private int TamPopu = 10;
     private int TamBits = Matriz.length;
     
+    private float TaxaCruz = 0.9f;
+    private float TaxaMuta = 0.05f; //Não Usa
+    private int MaxGen=50;
+    
     public algoritmoGenetico(){
         // POPULAÇÃO
         ArrayList<int[]> PopulaçãoInicial = PopulaçãoInicial(TamPopu, TamBits);
@@ -38,10 +41,10 @@ public class algoritmoGenetico extends Utils{
             System.out.print("Apt: "+apt[i]+"\n");
             soma += apt[i];
         }
-        System.out.print("Soma: "+soma+"\n");
+        System.out.print("Soma: "+soma+"\n\n");
         //FIM: IMPRIMIR FITNESS
         
-        OpCruzamento(PopulaçãoInicial, apt, TamPopu, r.nextFloat());
+        OpCruzamento(PopulaçãoInicial, apt, TamPopu, TaxaCruz);
         
     }
     
@@ -69,8 +72,8 @@ public class algoritmoGenetico extends Utils{
             soma = soma + fit[i];
             
             if(soma > valor){
-                vencedor = i-1;
-                 break;
+                vencedor = i;
+                break;
             }
         }
         
@@ -80,13 +83,18 @@ public class algoritmoGenetico extends Utils{
     public ArrayList<int[]> OpCruzamento(ArrayList<int[]> População,float[] fitness,int tp,float tc){
         ArrayList<int[]> novaGen = new ArrayList<int []>();
         
-        int qntCruz = Math.round(tp*tc)+10;
-        
+        int qntCruz = Math.round(tp*tc);
+                
         for(int i=0; i<qntCruz; i++){
-            int corte = r.nextInt(Matriz.length-1)+1;
+            int corte = r.nextInt(TamBits-1)+1;
             
-            int S_Pai = roleta(fitness);
-            int S_Mae = torneio(fitness);
+            int S_Pai = -1;
+            int S_Mae = -1;
+            
+            while(S_Pai == S_Mae){
+                S_Pai = roleta(fitness);
+                S_Mae = torneio(fitness);
+            }
             
             int[] pai = População.get(S_Pai);
             int[] mae = População.get(S_Mae);
