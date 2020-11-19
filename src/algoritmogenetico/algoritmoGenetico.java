@@ -34,18 +34,21 @@ public class algoritmoGenetico extends Utils{
         float soma=0f;
         
         // IMPRIMIR POPULAÇÃO
-        printPopulação(PopulaçãoInicial);
+        printPopulação("Pop: ",PopulaçãoInicial);
         
         //INICIO: IMPRIMIR FITNESS
         for(int i=0;i<apt.length;i++){
-            System.out.print("Apt: "+apt[i]+"\n");
+            //System.out.print("Apt: "+apt[i]+"\n");
             soma += apt[i];
         }
-        System.out.print("Soma: "+soma+"\n\n");
+        //System.out.print("Soma: "+soma+"\n\n");
         //FIM: IMPRIMIR FITNESS
         
-        OpCruzamento(PopulaçãoInicial, apt, TamPopu, TaxaCruz);
+        //OPERAÇÃO DE CRUZAMENTO
+        ArrayList<int[]> Ger = OpCruzamento(PopulaçãoInicial, apt, TamPopu, TaxaCruz);
         
+        //IMPRIME A NOVA GERAÇÃO
+        printPopulação("Ger: ",Ger);
     }
     
     public int torneio(float[] fit){
@@ -84,10 +87,10 @@ public class algoritmoGenetico extends Utils{
         ArrayList<int[]> novaGen = new ArrayList<int []>();
         
         int qntCruz = Math.round(tp*tc);
-                
+        
+        int corte = r.nextInt(TamBits-1)+1;
+        
         for(int i=0; i<qntCruz; i++){
-            int corte = r.nextInt(TamBits-1)+1;
-            
             int S_Pai = -1;
             int S_Mae = -1;
             
@@ -108,18 +111,43 @@ public class algoritmoGenetico extends Utils{
             System.arraycopy(part_mae, 0, filho1, corte, part_mae.length);
             System.arraycopy(part_pai, 0, filho2, corte, part_pai.length);
             
-            System.out.println("Roll:"+i+" - corte:"+corte);
-            System.out.println("Pai:"+S_Pai+" - Mae:"+S_Mae);
-            System.out.println(printArray(pai));
-            System.out.println(printArray(mae));
-            System.out.println(printArray(filho1));
-            System.out.println(printArray(filho2)+"\n");
+            filho1 = corrigeFilho(filho1);
+            filho2 = corrigeFilho(filho2);
             
             novaGen.add(filho1);
             novaGen.add(filho2);
         }
         
         return novaGen;
+    }
+    
+    public int[] corrigeFilho(int[] filho){
+        
+        int[] check = new int[filho.length];
+        ArrayList<Integer> NAparece = new ArrayList<>();
+        ArrayList<Integer> Repete = new ArrayList<>();
+        
+        for(int i=0;i<filho.length;i++){
+            check[filho[i]-1]++;
+        }
+        
+        for(int i=0;i<check.length;i++){
+            if(check[i] == 0){ NAparece.add(i+1); }
+            if(check[i] == 2){ Repete.add(i+1); }
+        }
+        
+        for(int i=filho.length-1;i>=0;i--){
+            if(NAparece.isEmpty() || Repete.isEmpty()){ break; }
+            
+            if(filho[i] == Repete.get(0)){
+                int ale = r.nextInt(NAparece.size());
+                filho[i] = NAparece.get(0);
+                Repete.remove(0);
+                NAparece.remove(0);
+            }
+        }
+        
+        return filho;
     }
     
     public float[] FAptidão(ArrayList<int[]> População,int tp){
