@@ -1,6 +1,7 @@
 package algoritmogenetico;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Utils {
         
@@ -23,6 +24,14 @@ public class Utils {
             }
             System.out.print("\n");
         }
+    }
+    
+    public ArrayList<int[]> OrdDecresc(ArrayList<int[]> PopulaçãoOri, float[] aptOri){
+        
+        
+                
+        return PopulaçãoOri;
+        
     }
     
 }

@@ -22,7 +22,7 @@ public class algoritmoGenetico extends Utils{
     private int TamBits = Matriz.length;
     
     private float TaxaCruz = 0.9f;
-    private float TaxaMuta = 0.05f; //Não Usa
+    private float TaxaMuta = 0.5f; //ORIGINAL 0.05
     private int MaxGen=50;
     
     public algoritmoGenetico(){
@@ -30,11 +30,11 @@ public class algoritmoGenetico extends Utils{
         ArrayList<int[]> PopulaçãoInicial = PopulaçãoInicial(TamPopu, TamBits);
         
         // FITNESS
-        float[] apt = FAptidão(PopulaçãoInicial, TamPopu);
+        float[] apt = FAptidão(PopulaçãoInicial);
         float soma=0f;
         
         // IMPRIMIR POPULAÇÃO
-        printPopulação("Pop: ",PopulaçãoInicial);
+        //printPopulação("Pop: ",PopulaçãoInicial);
         
         //INICIO: IMPRIMIR FITNESS
         for(int i=0;i<apt.length;i++){
@@ -47,8 +47,42 @@ public class algoritmoGenetico extends Utils{
         //OPERAÇÃO DE CRUZAMENTO
         ArrayList<int[]> Ger = OpCruzamento(PopulaçãoInicial, apt, TamPopu, TaxaCruz);
         
+        //OPERAÇÃO DE MUTAÇÃO
+        ArrayList<int[]> Mut = OpMutação(Ger, apt, TamPopu, TaxaMuta);
+        
         //IMPRIME A NOVA GERAÇÃO
         printPopulação("Ger: ",Ger);
+        
+        //IMPRIME A MUTANTE
+        printPopulação("Mut: ",Mut);
+        
+        //JUNTA AS POPULAÇÕES GERAÇÃO E MUTANTE
+        ArrayList<int[]> NovaPopulação = new ArrayList<>();
+        NovaPopulação.addAll(Ger);
+        NovaPopulação.addAll(Mut);
+        
+        //ORGANIZA A NOVA POPULAÇÃO
+        NovaPopulação = OrdDecresc(NovaPopulação, FAptidão(NovaPopulação));
+        
+        float[] Napt = FAptidão(NovaPopulação);
+        
+        printPopulação("NPOP: ", NovaPopulação);
+        
+//        for(int i=0;i<NovaPopulação.size();i++){
+//            
+//            int[] array = NovaPopulação.get(i);
+//            String pArray="{";
+//            for(int x=0;x<array.length;x++){
+//                pArray+=array[x];
+//                if(x!=array.length-1){pArray+=",";}
+//            }
+//            pArray+="}";
+//            
+//            String fit = " "+Napt[i];
+//            pArray+=fit;
+//            System.out.print(pArray+"\n");
+//        }
+        
     }
     
     public int torneio(float[] fit){
@@ -121,6 +155,35 @@ public class algoritmoGenetico extends Utils{
         return novaGen;
     }
     
+    public ArrayList<int[]> OpMutação(ArrayList<int[]> População,float[] fitness,int tp,float tm){
+        ArrayList<int[]> novaMut = new ArrayList<int []>();
+        
+        int qntCruz = Math.round(tp*tm);
+        
+        for(int x=0;x<qntCruz;x++){
+            
+            int[] Mutante = População.get(r.nextInt(População.size()));
+            
+            int Crom1 = -1;
+            int Crom2 = -1;
+            
+            while(Crom1 == Crom2){
+                Crom1 = r.nextInt(Mutante.length);
+                Crom2 = r.nextInt(Mutante.length);
+            }
+            
+            int valor = Mutante[Crom1];
+            
+            Mutante[Crom1] = Mutante[Crom2];
+            
+            Mutante[Crom2] = valor;
+            
+            novaMut.add(Mutante);
+        }
+        
+        return novaMut;
+    }
+    
     public int[] corrigeFilho(int[] filho){
         
         int[] check = new int[filho.length];
@@ -150,8 +213,8 @@ public class algoritmoGenetico extends Utils{
         return filho;
     }
     
-    public float[] FAptidão(ArrayList<int[]> População,int tp){
-        float[] f = new float[tp];
+    public float[] FAptidão(ArrayList<int[]> População){
+        float[] f = new float[População.size()];
         float soma = 0f;
         
         for(int i=0;i<f.length;i++){
