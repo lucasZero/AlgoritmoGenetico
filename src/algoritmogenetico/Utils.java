@@ -2,6 +2,8 @@ package algoritmogenetico;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Utils {
         
@@ -25,13 +27,26 @@ public class Utils {
             System.out.print("\n");
         }
     }
-    
-    public ArrayList<int[]> OrdDecresc(ArrayList<int[]> PopulaçãoOri, float[] aptOri){
         
+    public ArrayList<int[]> ordena(ArrayList<int[]> PopulaçãoOri, float[] aptOri){
         
-                
+        for(int x=0;x<aptOri.length;x++){
+            for(int y=0;y<aptOri.length;y++){
+                if(x != y){
+                    if(aptOri[x] > aptOri[y]){
+                        float Ftemp = aptOri[x];
+                        aptOri[x] = aptOri[y];
+                        aptOri[y] = Ftemp;
+                        
+                        int[] Ptemp = PopulaçãoOri.get(x);
+                        PopulaçãoOri.set(x, PopulaçãoOri.get(y));
+                        PopulaçãoOri.set(y, Ptemp);
+                    }
+                }
+            }
+        }
+        
         return PopulaçãoOri;
-        
     }
     
 }

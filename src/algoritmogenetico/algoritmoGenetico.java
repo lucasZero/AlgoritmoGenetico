@@ -51,37 +51,39 @@ public class algoritmoGenetico extends Utils{
         ArrayList<int[]> Mut = OpMutação(Ger, apt, TamPopu, TaxaMuta);
         
         //IMPRIME A NOVA GERAÇÃO
-        printPopulação("Ger: ",Ger);
+        //printPopulação("Ger: ",Ger);
         
         //IMPRIME A MUTANTE
-        printPopulação("Mut: ",Mut);
+        //printPopulação("Mut: ",Mut);
         
         //JUNTA AS POPULAÇÕES GERAÇÃO E MUTANTE
         ArrayList<int[]> NovaPopulação = new ArrayList<>();
         NovaPopulação.addAll(Ger);
         NovaPopulação.addAll(Mut);
         
-        //ORGANIZA A NOVA POPULAÇÃO
-        NovaPopulação = OrdDecresc(NovaPopulação, FAptidão(NovaPopulação));
-        
+        //GERA A APTIDÃO E ORGANIZA A NOVA POPULAÇÃO   
         float[] Napt = FAptidão(NovaPopulação);
+        ordena(NovaPopulação, Napt);
         
+        //IMPRIME A NOVA POPULAÇÃO
         printPopulação("NPOP: ", NovaPopulação);
         
-//        for(int i=0;i<NovaPopulação.size();i++){
-//            
-//            int[] array = NovaPopulação.get(i);
-//            String pArray="{";
-//            for(int x=0;x<array.length;x++){
-//                pArray+=array[x];
-//                if(x!=array.length-1){pArray+=",";}
-//            }
-//            pArray+="}";
-//            
-//            String fit = " "+Napt[i];
-//            pArray+=fit;
-//            System.out.print(pArray+"\n");
-//        }
+        
+        //WIP: IMPRIME A POPULAÇÃO COM A FITNESS
+        for(int i=0;i<NovaPopulação.size();i++){
+            
+            int[] array = NovaPopulação.get(i);
+            String pArray="TEST{";
+            for(int x=0;x<array.length;x++){
+                pArray+=array[x];
+                if(x!=array.length-1){pArray+=",";}
+            }
+            pArray+="}";
+            
+            String fit = " "+Napt[i];
+            pArray+=fit;
+            System.out.print(pArray+"\n");
+        }
         
     }
     
