@@ -51,29 +51,12 @@ public class algoritmoGenetico extends Utils{
             //FITNESS
             float[] apt = FAptidão(PopulaçãoAtual);
             float soma=0f;
-        
-            //IMPRIMIR POPULAÇÃO
-            //printPopulação("Pop: ",PopulaçãoAtual);
-        
-            //INICIO: IMPRIMIR FITNESS
-//            for(int i=0;i<apt.length;i++){
-//                System.out.print("Apt: "+apt[i]+"\n");
-//                soma += apt[i];
-//            }
-//            System.out.print("Soma: "+soma+"\n\n");
-            //FIM: IMPRIMIR FITNESS
-        
+                
             //OPERAÇÃO DE CRUZAMENTO
             ArrayList<int[]> Ger = OpCruzamento(PopulaçãoAtual, apt, TP, TC);
         
             //OPERAÇÃO DE MUTAÇÃO
             ArrayList<int[]> Mut = OpMutação(Ger, apt, TP, TM);
-        
-            //IMPRIME A NOVA GERAÇÃO
-            //printPopulação("Ger: ",Ger);
-        
-            //IMPRIME A MUTANTE
-            //printPopulação("Mut: ",Mut);
         
             //JUNTA AS POPULAÇÕES GERAÇÃO E MUTANTE
             ArrayList<int[]> NovaPopulação = new ArrayList<>();
@@ -86,26 +69,6 @@ public class algoritmoGenetico extends Utils{
             //GERA A APTIDÃO E ORGANIZA A NOVA POPULAÇÃO   
             float[] Napt = FAptidão(NovaPopulação);
             ordena(NovaPopulação, Napt);
-        
-            //IMPRIME A NOVA POPULAÇÃO
-            //printPopulação("NPOP: ", NovaPopulação);
-        
-        
-            //WIP: IMPRIME A POPULAÇÃO COM A FITNESS
-//            for(int i=0;i<NovaPopulação.size();i++){
-//                
-//                int[] array = NovaPopulação.get(i);
-//                String pArray="TEST{";
-//                for(int x=0;x<array.length;x++){
-//                    pArray+=array[x];
-//                    if(x!=array.length-1){pArray+=",";}
-//                }
-//                pArray+="}";
-//            
-//                String fit = " "+Napt[i];
-//                pArray+=fit;
-//                System.out.print(pArray+"\n");
-//            }
         
             //CRIA A NOVA POPULAÇÃO
             int elite = Math.round(IG*TP);
