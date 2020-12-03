@@ -18,72 +18,114 @@ public class algoritmoGenetico extends Utils{
             {11,9,11,13,8,3,0,2},
             {5,0,5,8,6,11,9,12}};
     
-    private int TamPopu = 10;
     private int TamBits = Matriz.length;
     
+    private int TamPopu = 10;
     private float TaxaCruz = 0.9f;
     private float TaxaMuta = 0.5f; //ORIGINAL 0.05
-    private int MaxGen=50;
+    private float InterGen = 0.5f;
+    private int NumGen=50;
+    
+//    TP = [10,50,100,200]    # tamanho da população
+//    TC = [0.5,0.6,0.8]      # taxa de cruzamento
+//    TM = [0,0.05,0.1,0.2]   # taxa de mutação
+//    IG = [0,0.1,0.2,0.5]    # intervalo de geração
+//    NG = [10,50,100]        # número de gerações
+//      FORMULA GANHO: (si - sf)*100/s
     
     public algoritmoGenetico(){
+        SubidaEncosta(TamPopu,TaxaCruz,TaxaMuta,InterGen,NumGen);
+    }
+    
+    public int[] SubidaEncosta(int TP,float TC,float TM,float IG,float NG){
         // POPULAÇÃO
-        ArrayList<int[]> PopulaçãoInicial = PopulaçãoInicial(TamPopu, TamBits);
+        ArrayList<int[]> PopulaçãoInicial = PopulaçãoInicial(TP, TamBits);
         
-        // FITNESS
-        float[] apt = FAptidão(PopulaçãoInicial);
-        float soma=0f;
+        ArrayList<int[]> PopulaçãoAtual = null;
         
-        // IMPRIMIR POPULAÇÃO
-        //printPopulação("Pop: ",PopulaçãoInicial);
+        for(int GenAt=0;GenAt<NG;GenAt++){
         
-        //INICIO: IMPRIMIR FITNESS
-        for(int i=0;i<apt.length;i++){
-            //System.out.print("Apt: "+apt[i]+"\n");
-            soma += apt[i];
-        }
-        //System.out.print("Soma: "+soma+"\n\n");
-        //FIM: IMPRIMIR FITNESS
-        
-        //OPERAÇÃO DE CRUZAMENTO
-        ArrayList<int[]> Ger = OpCruzamento(PopulaçãoInicial, apt, TamPopu, TaxaCruz);
-        
-        //OPERAÇÃO DE MUTAÇÃO
-        ArrayList<int[]> Mut = OpMutação(Ger, apt, TamPopu, TaxaMuta);
-        
-        //IMPRIME A NOVA GERAÇÃO
-        //printPopulação("Ger: ",Ger);
-        
-        //IMPRIME A MUTANTE
-        //printPopulação("Mut: ",Mut);
-        
-        //JUNTA AS POPULAÇÕES GERAÇÃO E MUTANTE
-        ArrayList<int[]> NovaPopulação = new ArrayList<>();
-        NovaPopulação.addAll(Ger);
-        NovaPopulação.addAll(Mut);
-        
-        //GERA A APTIDÃO E ORGANIZA A NOVA POPULAÇÃO   
-        float[] Napt = FAptidão(NovaPopulação);
-        ordena(NovaPopulação, Napt);
-        
-        //IMPRIME A NOVA POPULAÇÃO
-        printPopulação("NPOP: ", NovaPopulação);
-        
-        
-        //WIP: IMPRIME A POPULAÇÃO COM A FITNESS
-        for(int i=0;i<NovaPopulação.size();i++){
+            if(PopulaçãoAtual == null)
+                PopulaçãoAtual = (ArrayList<int[]>)PopulaçãoInicial.clone();
             
-            int[] array = NovaPopulação.get(i);
-            String pArray="TEST{";
-            for(int x=0;x<array.length;x++){
-                pArray+=array[x];
-                if(x!=array.length-1){pArray+=",";}
+            //FITNESS
+            float[] apt = FAptidão(PopulaçãoAtual);
+            float soma=0f;
+        
+            //IMPRIMIR POPULAÇÃO
+            //printPopulação("Pop: ",PopulaçãoAtual);
+        
+            //INICIO: IMPRIMIR FITNESS
+//            for(int i=0;i<apt.length;i++){
+//                System.out.print("Apt: "+apt[i]+"\n");
+//                soma += apt[i];
+//            }
+//            System.out.print("Soma: "+soma+"\n\n");
+            //FIM: IMPRIMIR FITNESS
+        
+            //OPERAÇÃO DE CRUZAMENTO
+            ArrayList<int[]> Ger = OpCruzamento(PopulaçãoAtual, apt, TP, TC);
+        
+            //OPERAÇÃO DE MUTAÇÃO
+            ArrayList<int[]> Mut = OpMutação(Ger, apt, TP, TM);
+        
+            //IMPRIME A NOVA GERAÇÃO
+            //printPopulação("Ger: ",Ger);
+        
+            //IMPRIME A MUTANTE
+            //printPopulação("Mut: ",Mut);
+        
+            //JUNTA AS POPULAÇÕES GERAÇÃO E MUTANTE
+            ArrayList<int[]> NovaPopulação = new ArrayList<>();
+            NovaPopulação.addAll(Ger);
+            NovaPopulação.addAll(Mut);
+        
+            //ORGANIZA A POPULAÇÃO ATUAL
+            ordena(PopulaçãoAtual,apt);
+            
+            //GERA A APTIDÃO E ORGANIZA A NOVA POPULAÇÃO   
+            float[] Napt = FAptidão(NovaPopulação);
+            ordena(NovaPopulação, Napt);
+        
+            //IMPRIME A NOVA POPULAÇÃO
+            //printPopulação("NPOP: ", NovaPopulação);
+        
+        
+            //WIP: IMPRIME A POPULAÇÃO COM A FITNESS
+//            for(int i=0;i<NovaPopulação.size();i++){
+//                
+//                int[] array = NovaPopulação.get(i);
+//                String pArray="TEST{";
+//                for(int x=0;x<array.length;x++){
+//                    pArray+=array[x];
+//                    if(x!=array.length-1){pArray+=",";}
+//                }
+//                pArray+="}";
+//            
+//                String fit = " "+Napt[i];
+//                pArray+=fit;
+//                System.out.print(pArray+"\n");
+//            }
+        
+            //CRIA A NOVA POPULAÇÃO
+            int elite = Math.round(IG*TP);
+            
+                ArrayList<int[]> NovaGeração = new ArrayList();
+                
+            for(int i=0;i<elite;i++){
+                NovaGeração.add(PopulaçãoAtual.get(i));
             }
-            pArray+="}";
             
-            String fit = " "+Napt[i];
-            pArray+=fit;
-            System.out.print(pArray+"\n");
+            for(int i=elite;i<TP;i++){
+                NovaGeração.add(NovaPopulação.get(i-elite));
+            }
+            
+            PopulaçãoAtual.clear();
+            
+            PopulaçãoAtual = (ArrayList<int[]>)NovaGeração.clone();
         }
+        
+        return PopulaçãoAtual.get(0);
         
     }
     

@@ -33,7 +33,7 @@ public class Utils {
         for(int x=0;x<aptOri.length;x++){
             for(int y=0;y<aptOri.length;y++){
                 if(x != y){
-                    if(aptOri[x] > aptOri[y]){
+                    if(aptOri[x] < aptOri[y]){
                         float Ftemp = aptOri[x];
                         aptOri[x] = aptOri[y];
                         aptOri[y] = Ftemp;
