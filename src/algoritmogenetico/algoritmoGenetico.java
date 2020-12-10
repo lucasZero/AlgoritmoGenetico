@@ -19,37 +19,21 @@ public class algoritmoGenetico extends Utils{
             {5,0,5,8,6,11,9,12}};
     
     private int TamBits = Matriz.length;
-    
-    private int TamPopu = 10;
-    private float TaxaCruz = 0.9f;
-    private float TaxaMuta = 0.5f; //ORIGINAL 0.05
-    private float InterGen = 0.5f;
-    private int NumGen=50;
-    
-//    TP = [10,50,100,200]    # tamanho da população
-//    TC = [0.5,0.6,0.8]      # taxa de cruzamento
-//    TM = [0,0.05,0.1,0.2]   # taxa de mutação
-//    IG = [0,0.1,0.2,0.5]    # intervalo de geração
-//    NG = [10,50,100]        # número de gerações
-//      FORMULA GANHO: (si - sf)*100/s
-    
-    public algoritmoGenetico(){
-        SubidaEncosta(TamPopu,TaxaCruz,TaxaMuta,InterGen,NumGen);
-    }
-    
-    public int[] SubidaEncosta(int TP,float TC,float TM,float IG,float NG){
+            
+    public algoritmoGenetico(int TP,float TC,float TM,float IG,float NG){
         // POPULAÇÃO
         ArrayList<int[]> PopulaçãoInicial = PopulaçãoInicial(TP, TamBits);
         
         ArrayList<int[]> PopulaçãoAtual = null;
         
         for(int GenAt=0;GenAt<NG;GenAt++){
-        
-            if(PopulaçãoAtual == null)
+            
+            if(PopulaçãoAtual == null){
                 PopulaçãoAtual = (ArrayList<int[]>)PopulaçãoInicial.clone();
+            }
             
             //FITNESS
-            float[] apt = FAptidão(PopulaçãoAtual);
+            float[]apt = FAptidão(PopulaçãoAtual);
             float soma=0f;
                 
             //OPERAÇÃO DE CRUZAMENTO
@@ -73,7 +57,7 @@ public class algoritmoGenetico extends Utils{
             //CRIA A NOVA POPULAÇÃO
             int elite = Math.round(IG*TP);
             
-                ArrayList<int[]> NovaGeração = new ArrayList();
+            ArrayList<int[]> NovaGeração = new ArrayList();
                 
             for(int i=0;i<elite;i++){
                 NovaGeração.add(PopulaçãoAtual.get(i));
@@ -87,8 +71,22 @@ public class algoritmoGenetico extends Utils{
             
             PopulaçãoAtual = (ArrayList<int[]>)NovaGeração.clone();
         }
+        ordena(PopulaçãoInicial, FAptidão(PopulaçãoInicial));
         
-        return PopulaçãoAtual.get(0);
+        int AFinal = avalia(PopulaçãoAtual.get(0));
+        
+        int AInicial = avalia(PopulaçãoInicial.get(0));
+                
+        if(AFinal != 0 && VerificaFilho(PopulaçãoAtual.get(0))){
+            
+            System.out.print(AInicial+"	");
+            System.out.print(TP+"	"+TC+"	"+TM+"	"+IG+"	"+NG);
+            System.out.print("	"+AFinal+"\n");
+        }
+        else{
+            new algoritmoGenetico(TP, TC, TM, IG, NG);
+        }
+        
         
     }
     
@@ -109,7 +107,7 @@ public class algoritmoGenetico extends Utils{
         float valor = r.nextFloat();
         float soma=0;
         
-        int vencedor = fit.length;
+        int vencedor = fit.length-1;
         
         for(int i=0;i<fit.length;i++){
             
@@ -136,8 +134,8 @@ public class algoritmoGenetico extends Utils{
             int S_Mae = -1;
             
             while(S_Pai == S_Mae){
-                S_Pai = roleta(fitness);
-                S_Mae = torneio(fitness);
+                S_Pai = torneio(fitness);
+                S_Mae = roleta(fitness);
             }
             
             int[] pai = População.get(S_Pai);
@@ -189,6 +187,25 @@ public class algoritmoGenetico extends Utils{
         }
         
         return novaMut;
+    }
+    
+    public boolean VerificaFilho(int[] filho){
+        boolean OK = true;
+        
+        int[] check = new int[filho.length];
+        
+        for(int i=0;i<filho.length;i++){
+            check[filho[i]-1]++;
+        }
+        
+        for(int i=0;i<check.length;i++){
+            if(check[i] == 0 || check[i] == 2){
+                OK=false;
+                break;
+            }
+        }
+        
+        return OK;
     }
     
     public int[] corrigeFilho(int[] filho){
